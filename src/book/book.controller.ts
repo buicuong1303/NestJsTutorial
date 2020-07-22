@@ -8,21 +8,22 @@ import {
   Delete,
   Put,
   Query,
+  UsePipes,
+  ValidationPipe,
+  Patch,
 } from '@nestjs/common';
-import { Request } from 'express';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { BookService } from './book.service';
-import { Book } from './model/book.model';
+import { Book, BookStatus } from './model/book.model';
 import { GetBookFilter } from './dto/get-book-filter.dto';
+import { BookStatusValidationPipe } from './pipes/book-status-validatatiom.pipe';
+
 @Controller('books')
 export class BookController {
   constructor(private bookService: BookService) {}
-  @Get()
-  findAll(): Book[] {
-    return this.bookService.getAllBooks();
-  }
   @Post()
+  @UsePipes(ValidationPipe)
   createBook(@Body() createBookDto: CreateBookDto): Book {
     return this.bookService.createBook(createBookDto);
   }
@@ -34,12 +35,19 @@ export class BookController {
   deleteBookById(@Param('id') id: string): void {
     return this.bookService.deleteBookById(id);
   }
+  @Patch('/:id/status')
+  updateStatus(
+    @Param('id') id: string,
+    @Body('status', BookStatusValidationPipe) status: BookStatus,
+  ): Book {
+    return this.bookService.updateBookStatus(id, status);
+  }
   @Put()
-  updateBook(@Body() updateBookDto: UpdateBookDto): Book {
+  updateBook(@Body(ValidationPipe) updateBookDto: UpdateBookDto): Book {
     return this.bookService.updateBook(updateBookDto);
   }
   @Get()
-  getBookFilter(@Query() filterDto: GetBookFilter): Book[] {
+  getBookFilter(@Query(ValidationPipe) filterDto: GetBookFilter): Book[] {
     if (Object.keys(filterDto).length) {
       return this.bookService.searchBook(filterDto);
     }
