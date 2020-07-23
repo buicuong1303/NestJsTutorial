@@ -1,4 +1,4 @@
-import { BookStatus } from '../model/book.model';
+import { BookStatus } from '../book-status.enum';
 import { IsOptional, IsIn } from 'class-validator';
 
 export class GetBookFilter {
