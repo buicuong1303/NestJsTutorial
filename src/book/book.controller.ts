@@ -12,6 +12,7 @@ import {
   ValidationPipe,
   Patch,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
@@ -19,8 +20,10 @@ import { BookService } from './book.service';
 import { GetBookFilter } from './dto/get-book-filter.dto';
 import { BookStatusValidationPipe } from './pipes/book-status-validatatiom.pipe';
 import { Book } from './book.entity';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('books')
+@UseGuards(AuthGuard())
 export class BookController {
   constructor(private bookService: BookService) {}
   @Get('/:id')
